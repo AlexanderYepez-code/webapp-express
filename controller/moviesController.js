@@ -1,6 +1,6 @@
 import connetion from "../database/dbConnetion.js";
 
-function index (req, res) {
+function index (req, res, next) {
     const query = "SELECT * FROM movies";
 
     connetion.query(query,(err, result) =>{
@@ -12,7 +12,7 @@ function index (req, res) {
 
 }
 
-function show (req, res) {
+function show (req, res, next) {
 const id = req.params.id;
 
 const query = "SELECT * FROM movies WHERE id = ?";
@@ -27,8 +27,16 @@ connetion.query(query,[id],(err, result)=>{
             message: "Movie not found"
         });
     }
-    const movie = result[0]
-    res.json(movie)
+    const movie = result[0];
+
+    const reviewsQuery = "SELECT * FROM reviews WHERE movie_id = ?";
+    connetion.query(reviewsQuery,[id],(err, reviewsResult)=>{
+        if(err) return next(err);
+        res.json({
+            ...movie,
+            reviews: reviewsResult,
+        })
+    })
 })
 }
 export default {index, show};
