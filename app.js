@@ -13,8 +13,9 @@ app.use(
 );
 
 app.use(express.json())
-app.use ("/api/movies", moviesRouter);
 app.use(express.static("public"));
+app.use ("/api/movies", moviesRouter);
+
 
 
 app.listen(port,() => {
